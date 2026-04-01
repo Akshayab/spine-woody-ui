@@ -1,0 +1,134 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ========== DARK THEME (default) ========== */
+:root, [data-theme="dark"] {
+  --c-bg: #0a0a0a;
+  --c-bg-elevated: #0f0f0f;
+  --c-surface: #141414;
+  --c-surface-2: #1a1a1a;
+  --c-surface-3: #222222;
+  --c-border: #1e1e1e;
+  --c-border-light: #2a2a2a;
+  --c-border-subtle: #161616;
+  --c-accent: #d4a053;
+  --c-accent-light: #e8bf7a;
+  --c-accent-dim: rgba(212, 160, 83, 0.08);
+  --c-accent-border: rgba(212, 160, 83, 0.15);
+  --c-teal: #5b8a8a;
+  --c-teal-dim: rgba(91, 138, 138, 0.1);
+  --c-text-primary: #e8e4de;
+  --c-text-secondary: #8a8378;
+  --c-text-muted: #5a554e;
+  --c-text-bright: #f5f0e8;
+  --c-monitoring: #d4a053;
+  --c-research: #7a9ec2;
+  --c-content: #b89ad4;
+  --c-bd: #6ab89a;
+  --c-terminal-bg: #0c0c0c;
+  --c-terminal-text: #4ade80;
+  --c-terminal-dim: #2a5a3a;
+  --c-overlay: rgba(0, 0, 0, 0.7);
+  --c-noise-opacity: 0.025;
+  --c-card-shadow: none;
+}
+
+/* ========== LIGHT THEME ========== */
+[data-theme="light"] {
+  --c-bg: #f5f3ef;
+  --c-bg-elevated: #ffffff;
+  --c-surface: #ffffff;
+  --c-surface-2: #f8f6f3;
+  --c-surface-3: #f0ede8;
+  --c-border: #e5e0d8;
+  --c-border-light: #d8d2c8;
+  --c-border-subtle: #ece8e2;
+  --c-accent: #9a7340;
+  --c-accent-light: #b8893a;
+  --c-accent-dim: rgba(154, 115, 64, 0.06);
+  --c-accent-border: rgba(154, 115, 64, 0.15);
+  --c-teal: #4a7a7a;
+  --c-teal-dim: rgba(74, 122, 122, 0.08);
+  --c-text-primary: #2a2520;
+  --c-text-secondary: #6b6560;
+  --c-text-muted: #9a948e;
+  --c-text-bright: #1a1510;
+  --c-monitoring: #9a7340;
+  --c-research: #4a7aaa;
+  --c-content: #8a6aaa;
+  --c-bd: #4a9a7a;
+  --c-terminal-bg: #1a1a2e;
+  --c-terminal-text: #4ade80;
+  --c-terminal-dim: #2a5a3a;
+  --c-overlay: rgba(0, 0, 0, 0.4);
+  --c-noise-opacity: 0;
+  --c-card-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
+}
+
+@theme {
+  --color-bg: var(--c-bg);
+  --color-bg-elevated: var(--c-bg-elevated);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-surface-3: var(--c-surface-3);
+  --color-border: var(--c-border);
+  --color-border-light: var(--c-border-light);
+  --color-border-subtle: var(--c-border-subtle);
+  --color-accent: var(--c-accent);
+  --color-accent-light: var(--c-accent-light);
+  --color-accent-dim: var(--c-accent-dim);
+  --color-accent-border: var(--c-accent-border);
+  --color-teal: var(--c-teal);
+  --color-teal-dim: var(--c-teal-dim);
+  --color-text-primary: var(--c-text-primary);
+  --color-text-secondary: var(--c-text-secondary);
+  --color-text-muted: var(--c-text-muted);
+  --color-text-bright: var(--c-text-bright);
+  --color-monitoring: var(--c-monitoring);
+  --color-research: var(--c-research);
+  --color-content: var(--c-content);
+  --color-bd: var(--c-bd);
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-text-primary);
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+* { box-sizing: border-box; }
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--c-noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--c-border-light); border-radius: 3px; }
+
+.font-mono { font-family: 'JetBrains Mono', 'SF Mono', monospace !important; }
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(212, 160, 83, 0.0); }
+  50% { box-shadow: 0 0 30px rgba(212, 160, 83, 0.06); }
+}
+.animate-breathe { animation: breathe 3s ease-in-out infinite; }
+.animate-glow { animation: glow-pulse 4s ease-in-out infinite; }
