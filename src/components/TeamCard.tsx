@@ -28,7 +28,6 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
   const config = typeConfig[team.type];
   const TypeIcon = config.icon;
   const runningAgents = team.subAgents.filter(a => a.status === 'running');
-  const completedAgents = team.subAgents.filter(a => a.status === 'completed');
   const latestActivity = team.activity[0];
 
   return (

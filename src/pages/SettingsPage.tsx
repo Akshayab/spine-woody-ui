@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { usePersona } from '../context/PersonaContext';
 import { useTheme } from '../context/ThemeContext';
-import { Bell, Clock, Users, Sun, Moon } from 'lucide-react';
+import { Bell, Users, Sun, Moon } from 'lucide-react';
 
 export default function SettingsPage() {
   const { currentPersona } = usePersona();

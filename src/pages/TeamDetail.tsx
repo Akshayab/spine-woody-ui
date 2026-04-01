@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Eye, Search, Pencil, Briefcase, ExternalLink, Zap, Bot, Terminal, LayoutGrid, ChevronRight, ArrowRight, MessageSquare, ArrowUp, Server } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Zap, Bot, Terminal, LayoutGrid, ChevronRight, ArrowRight, MessageSquare, ArrowUp, Server } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
 import ArtifactPreview from '../components/ArtifactPreview';
 import CanvasDAG from '../components/CanvasDAG';
@@ -9,7 +9,6 @@ import SandboxTerminal from '../components/SandboxTerminal';
 import Sparkline from '../components/Sparkline';
 import type { Artifact, TeamType, SubAgent, ChatMessage } from '../data/types';
 
-const typeIcons: Record<TeamType, typeof Eye> = { monitoring: Eye, research: Search, content: Pencil, bd: Briefcase };
 const typeColors: Record<TeamType, string> = { monitoring: '#d4a053', research: '#7a9ec2', content: '#b89ad4', bd: '#6ab89a' };
 const typeLabels: Record<TeamType, string> = { monitoring: 'Monitoring', research: 'Research', content: 'Creative', bd: 'Business Dev' };
 
@@ -58,7 +57,6 @@ export default function TeamDetail() {
     return <div className="p-8"><p style={{ color: 'var(--c-text-muted)' }}>Team not found.</p></div>;
   }
 
-  const TypeIcon = typeIcons[team.type];
   const color = typeColors[team.type];
   const runningAgents = team.subAgents.filter(a => a.status === 'running');
 
@@ -293,7 +291,7 @@ function TeamChat({ messages, onSend, leadName, color }: { messages: ChatMessage
             <p className="text-[12px] font-mono" style={{ color: 'var(--c-text-muted)' }}>Message {leadName} to give direction</p>
           </div>
         )}
-        {messages.map((msg, i) => (
+        {messages.map((msg, _i) => (
           <motion.div key={msg.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${msg.sender === 'user' ? 'rounded-br-md' : 'rounded-bl-md'}`}

@@ -58,7 +58,7 @@ export default function Conversations() {
   }, [currentPersona.id, preselectedTeam]);
 
   const activeThread = threads.find(t => t.id === activeThreadId);
-  const activeTeam = activeThread?.teamId ? currentPersona.teams.find(t => t.id === activeThread.teamId) : null;
+  const activeTeam = activeThread?.teamId ? currentPersona.teams.find(t => t.id === activeThread.teamId) : undefined;
 
   const handleSend = (text: string) => {
     if (!activeThread) return;

@@ -37,7 +37,6 @@ export default function SandboxTerminal({ lines, files, height = 200 }: Props) {
       <div className="p-3 overflow-y-auto" style={{ height: height - 32 }}>
         {lines.slice(0, visibleLines).map((line, i) => {
           const isCommand = line.startsWith('$');
-          const isOutput = !isCommand;
           return (
             <motion.div
               key={i}

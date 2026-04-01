@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronDown, Plus, X, Bot, Clock, AlertTriangle, FileText, Activity, Sparkles, ArrowUp, Rocket } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
 import TeamCard from '../components/TeamCard';
-import CountUp from '../components/CountUp';
+
 
 export default function CommandCenter() {
   const { currentPersona, addTeam, dismissAlert, approveArtifact } = usePersona();
@@ -15,7 +15,7 @@ export default function CommandCenter() {
   const [commandInput, setCommandInput] = useState('');
   const [commandResponse, setCommandResponse] = useState<string | null>(null);
   const runningAgents = currentPersona.teams.reduce((sum, t) => sum + t.subAgents.filter(a => a.status === 'running').length, 0);
-  const totalSubAgents = currentPersona.teams.reduce((sum, t) => sum + t.subAgents.length, 0);
+
 
   const alerts = currentPersona.teams.flatMap(t => t.activity.filter(a => a.type === 'alert').map(a => ({ ...a, teamName: t.name, teamId: t.id })));
   const recentArtifacts = currentPersona.teams.flatMap(t => t.artifacts.filter(a => a.daysAgo <= 1 && !a.pinned).map(a => ({ ...a, teamName: t.name })));

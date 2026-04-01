@@ -22,7 +22,7 @@ export default function ArtifactsPage() {
   const allArtifacts = getAllArtifacts(currentPersona.id);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
-  const [teamFilter, setTeamFilter] = useState('all');
+  const [teamFilter, _setTeamFilter] = useState('all');
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
 
   const filtered = allArtifacts.filter(a => {

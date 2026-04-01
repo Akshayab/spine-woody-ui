@@ -4,7 +4,6 @@ export default function CountUp({ end, duration = 1200 }: { end: number; duratio
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    let start = 0;
     const startTime = Date.now();
     const step = () => {
       const elapsed = Date.now() - startTime;
