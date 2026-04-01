@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Radio, FileText, MessageCircle, Settings, Sun, Moon, Smartphone } from 'lucide-react';
+import { Radio, FileText, MessageCircle, Settings, Sun, Moon, Smartphone, Zap } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import PersonaSwitcher from './PersonaSwitcher';
 import { useTheme } from '../context/ThemeContext';
@@ -9,6 +9,7 @@ const navItems = [
   { to: '/', icon: Radio, label: 'Command Center' },
   { to: '/conversations', icon: MessageCircle, label: 'Conversations' },
   { to: '/artifacts', icon: FileText, label: 'Artifacts' },
+  { to: '/automations', icon: Zap, label: 'Automations' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
