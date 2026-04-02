@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { PersonaProvider } from './context/PersonaContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Layout from './components/Layout';
@@ -16,7 +16,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <PersonaProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<CommandCenter />} />
@@ -30,7 +30,7 @@ export default function App() {
               <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </PersonaProvider>
     </ThemeProvider>
   );
