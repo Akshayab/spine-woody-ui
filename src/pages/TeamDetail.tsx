@@ -135,12 +135,12 @@ export default function TeamDetail() {
               </div>
             </div>
 
-            {/* Sub-agents */}
+            {/* Agents */}
             <div className="mb-3">
-              <h3 className="text-[10px] font-mono uppercase tracking-[0.12em]" style={{ color: 'var(--c-text-muted)' }}>Sub-agents</h3>
+              <h3 className="text-[10px] font-mono uppercase tracking-[0.12em]" style={{ color: 'var(--c-text-muted)' }}>Agents</h3>
             </div>
 
-            {/* Sub-agents */}
+            {/* Agents */}
             <div className="space-y-3">
               {team.subAgents.map((agent, i) => (
                 <SubAgentCard key={agent.id} agent={agent} color={color} index={i}
@@ -348,11 +348,6 @@ function SubAgentCard({ agent, color, index, expanded, onToggle }: { agent: SubA
           <div className="flex items-center gap-2">
             <span className="text-[13px] font-medium" style={{ color: 'var(--c-text-primary)' }}>{agent.name}</span>
             <span className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--c-surface-2)', color: 'var(--c-text-muted)' }}>{agent.role}</span>
-          </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{isCanvas ? 'Canvas' : 'Sandbox'}</span>
-            {isCanvas && agent.workspace.type === 'canvas' && <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{agent.workspace.blocks.length} blocks</span>}
-            {!isCanvas && agent.workspace.type === 'sandbox' && <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{agent.workspace.files.length} files</span>}
           </div>
         </div>
         <div className="flex items-center gap-2">

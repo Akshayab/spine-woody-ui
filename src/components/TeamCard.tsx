@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, Search, Pencil, Briefcase, ChevronRight, TrendingUp, TrendingDown, Bot, Terminal, LayoutGrid, Clock, Code } from 'lucide-react';
-import type { Team, SubAgent } from '../data/types';
+import { Eye, Search, Pencil, Briefcase, ChevronRight, TrendingUp, TrendingDown, Bot, Clock, Code } from 'lucide-react';
+import type { Team } from '../data/types';
 import CountUp from './CountUp';
 import Sparkline from './Sparkline';
 
@@ -13,20 +13,9 @@ const typeConfig = {
   engineering: { label: 'Engineering', icon: Code, color: '#60a5fa' },
 };
 
-function SubAgentPill({ agent }: { agent: SubAgent }) {
-  const isRunning = agent.status === 'running';
-  return (
-    <div className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-mono" style={{ background: 'var(--c-surface-2)', border: '1px solid var(--c-border)' }}>
-      {agent.workspace.type === 'canvas' ? <LayoutGrid size={9} style={{ color: 'var(--c-accent)' }} /> : <Terminal size={9} style={{ color: 'var(--c-terminal-text)' }} />}
-      <span style={{ color: 'var(--c-text-secondary)' }}>{agent.name}</span>
-      {isRunning && <div className="w-1 h-1 rounded-full animate-breathe" style={{ background: 'var(--c-accent)' }} />}
-    </div>
-  );
-}
-
 export default function TeamCard({ team, index }: { team: Team; index: number }) {
   const navigate = useNavigate();
-  const config = typeConfig[team.type];
+  const config = typeConfig[team.type] || typeConfig.research;
   const TypeIcon = config.icon;
   const runningAgents = team.subAgents.filter(a => a.status === 'running');
   const latestActivity = team.activity[0];
@@ -43,9 +32,9 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
     >
       <div className="p-5">
         {/* Header */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between mb-3">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1">
               <TypeIcon size={14} style={{ color: config.color }} strokeWidth={1.5} />
               <span className="text-[10px] font-mono font-medium uppercase tracking-[0.12em]" style={{ color: config.color }}>{config.label}</span>
             </div>
@@ -60,24 +49,12 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
         {/* Team lead */}
         <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg" style={{ background: 'var(--c-surface-2)', border: '1px solid var(--c-border-subtle)' }}>
           <Bot size={13} style={{ color: config.color }} />
-          <span className="text-[11px] font-mono" style={{ color: 'var(--c-text-secondary)' }}>
-            <span style={{ color: 'var(--c-text-primary)' }}>{team.lead.name}</span> — {team.lead.personality}
+          <span className="text-[11px]" style={{ color: 'var(--c-text-secondary)' }}>
+            <span style={{ color: 'var(--c-text-primary)' }}>{team.lead.name}</span> · {runningAgents.length > 0 ? `${runningAgents.length} working` : team.subAgents.length > 0 ? `${team.subAgents.length} ready` : 'Setting up'}
           </span>
         </div>
 
-        {/* Sub-agents */}
-        <div className="mb-3">
-          <div className="text-[9px] font-mono uppercase tracking-[0.12em] mb-1.5" style={{ color: 'var(--c-text-muted)' }}>
-            Sub-agents · {runningAgents.length} active / {team.subAgents.length}
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {team.subAgents.slice(0, 4).map(agent => (
-              <SubAgentPill key={agent.id} agent={agent} />
-            ))}
-          </div>
-        </div>
-
-        {/* Key metrics with sparklines */}
+        {/* KPIs */}
         <div className="grid grid-cols-2 gap-2 mb-3">
           {team.kpis.slice(0, 2).map((kpi, i) => (
             <div key={i} className="rounded-lg px-3 py-2" style={{ background: 'var(--c-bg)', border: '1px solid var(--c-border-subtle)' }}>
@@ -96,7 +73,7 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
           ))}
         </div>
 
-        {/* Deadline if exists */}
+        {/* Deadline */}
         {team.deadline && (
           <div className="flex items-center gap-2 px-3 py-1.5 mb-3 rounded-lg" style={{ background: team.deadline.daysLeft <= 3 ? 'rgba(239,68,68,0.06)' : 'var(--c-accent-dim)', border: `1px solid ${team.deadline.daysLeft <= 3 ? 'rgba(239,68,68,0.15)' : 'var(--c-accent-border)'}` }}>
             <Clock size={10} style={{ color: team.deadline.daysLeft <= 3 ? '#ef4444' : 'var(--c-accent)' }} />
@@ -106,7 +83,7 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
           </div>
         )}
 
-        {/* Latest activity — single line */}
+        {/* Latest activity */}
         {latestActivity && (
           <div className="flex items-start gap-2 py-2 border-t" style={{ borderColor: 'var(--c-border)' }}>
             <div className="w-1 h-1 rounded-full mt-1.5 shrink-0" style={{ background: config.color, opacity: 0.6 }} />
@@ -114,15 +91,12 @@ export default function TeamCard({ team, index }: { team: Team; index: number })
           </div>
         )}
 
-        {/* Footer */}
+        {/* Footer — clean, just artifact count + hover chevron */}
         <div className="flex items-center justify-between pt-2 mt-1 border-t" style={{ borderColor: 'var(--c-border)' }}>
           <div className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
             {team.artifacts.length} artifacts
           </div>
-          <span className="text-[11px] font-mono flex items-center gap-1 transition-colors" style={{ color: 'var(--c-text-muted)' }}>
-            Enter
-            <ChevronRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-          </span>
+          <ChevronRight size={14} style={{ color: 'var(--c-text-muted)', opacity: 0.2 }} className="group-hover:opacity-60 group-hover:translate-x-0.5 transition-all" />
         </div>
       </div>
     </motion.div>

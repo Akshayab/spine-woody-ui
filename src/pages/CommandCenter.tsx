@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Plus, X, Bot, Clock, AlertTriangle, FileText, Activity, Sparkles, ArrowUp, Rocket } from 'lucide-react';
+import { ChevronDown, ChevronRight, Plus, X, Bot, Clock, AlertTriangle, FileText, Activity, Sparkles, ArrowUp, Rocket } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
 import TeamCard from '../components/TeamCard';
 
@@ -137,6 +137,19 @@ export default function CommandCenter() {
               <Clock size={11} /> <span className="font-mono font-semibold">{d.daysLeft}d</span> {d.label}
             </span>
           ))}
+        </motion.div>
+      )}
+
+      {/* Inline top alert — visible without expanding */}
+      {hasTeams && alerts.length > 0 && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+          className="mb-4 flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer"
+          style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.12)' }}
+          onClick={() => navigate(`/team/${alerts[0].teamId}`)}>
+          <AlertTriangle size={13} className="text-red-400 shrink-0" />
+          <span className="text-[12px] flex-1" style={{ color: 'var(--c-text-primary)' }}>{alerts[0].message}</span>
+          <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{alerts[0].teamName}</span>
+          <ChevronRight size={12} style={{ color: 'var(--c-text-muted)', opacity: 0.4 }} />
         </motion.div>
       )}
 
