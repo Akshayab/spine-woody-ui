@@ -2342,6 +2342,25 @@ export const personas: Persona[] = [
         ],
       },
     ],
+    projects: [
+      {
+        id: 'w-proj-1',
+        name: 'Wine Expo Chicago',
+        description: 'Prepare for the upcoming wine expo: exhibitor research, competitor analysis, marketing materials, and booth strategy.',
+        personaId: 'woody',
+        teamIds: ['w-market-research', 'w-competitor-watch', 'w-content-marketing'],
+        deadline: { label: 'Expo opens', date: 'May 15', daysLeft: 44 },
+        createdAt: '2 weeks ago',
+      },
+      {
+        id: 'w-proj-2',
+        name: 'Spring Collection Launch',
+        description: 'Launch the 2025 spring wine collection: pricing strategy, marketing campaign, distributor outreach.',
+        personaId: 'woody',
+        teamIds: ['w-market-research', 'w-content-marketing'],
+        createdAt: '1 week ago',
+      },
+    ],
   },
   {
     id: 'sarah',
@@ -2387,6 +2406,26 @@ export const personas: Persona[] = [
         ],
       },
     ],
+    projects: [
+      {
+        id: 's-proj-1',
+        name: 'Ontario RFP Response',
+        description: 'Prepare and submit proposal for Ontario Ministry of Health Digital Health Transformation RFP.',
+        personaId: 'sarah',
+        teamIds: ['s-novapharma', 's-business-dev'],
+        deadline: { label: 'RFP deadline', date: 'Apr 18', daysLeft: 16 },
+        createdAt: '3 days ago',
+      },
+      {
+        id: 's-proj-2',
+        name: 'GreenBuild Board Prep',
+        description: 'Prepare strategy deck and supporting materials for GreenBuild board meeting.',
+        personaId: 'sarah',
+        teamIds: ['s-greenbuild', 's-business-dev'],
+        deadline: { label: 'Board meeting', date: 'Apr 22', daysLeft: 20 },
+        createdAt: '1 week ago',
+      },
+    ],
   },
   {
     id: 'marcus',
@@ -2430,6 +2469,25 @@ export const personas: Persona[] = [
         ],
       },
     ],
+    projects: [
+      {
+        id: 'm-proj-1',
+        name: 'BNPL Launch',
+        description: 'Coordinate BNPL integration launch: competitive analysis, user research validation, stakeholder alignment, and go-to-market.',
+        personaId: 'marcus',
+        teamIds: ['m-competitive-intel', 'm-user-research', 'm-stakeholder-updates'],
+        createdAt: '2 weeks ago',
+      },
+      {
+        id: 'm-proj-2',
+        name: 'Stripe Pricing Response',
+        description: 'Analyze Stripe Connect pricing change impact and develop response strategy.',
+        personaId: 'marcus',
+        teamIds: ['m-competitive-intel', 'm-stakeholder-updates'],
+        deadline: { label: 'Pricing decision', date: 'Apr 10', daysLeft: 8 },
+        createdAt: '3 days ago',
+      },
+    ],
   },
   {
     id: 'alex',
@@ -2450,6 +2508,7 @@ export const personas: Persona[] = [
     ],
     imessages: [],
     chatThreads: [],
+    projects: [],
   },
 ];
 

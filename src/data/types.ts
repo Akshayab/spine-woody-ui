@@ -168,6 +168,16 @@ export interface ChatThread {
   lastActivity: string;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  personaId: string;
+  teamIds: string[];
+  deadline?: { label: string; date: string; daysLeft: number };
+  createdAt: string;
+}
+
 export interface Persona {
   id: string;
   name: string;
@@ -178,4 +188,5 @@ export interface Persona {
   suggestedActions: SuggestedAction[];
   imessages: IMessageBubble[];
   chatThreads: ChatThread[];
+  projects: Project[];
 }

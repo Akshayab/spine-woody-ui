@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Zap, Bot, Terminal, LayoutGrid, ChevronRight, ArrowRight, MessageSquare, ArrowUp, Server } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Zap, Bot, Terminal, LayoutGrid, ChevronRight, ArrowRight, MessageSquare, ArrowUp, Server, FolderKanban } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
 import ArtifactPreview from '../components/ArtifactPreview';
 import CanvasDAG from '../components/CanvasDAG';
@@ -102,6 +102,18 @@ export default function TeamDetail() {
         <div className="mb-5">
           <h1 className="text-2xl font-light tracking-tight" style={{ color: 'var(--c-text-primary)' }}>{team.name}</h1>
           <p className="text-[12px] mt-1 max-w-xl" style={{ color: 'var(--c-text-muted)' }}>{team.description}</p>
+          {/* Project badges */}
+          {(currentPersona.projects || []).filter(p => p.teamIds.includes(team.id)).length > 0 && (
+            <div className="flex items-center gap-2 mt-2">
+              {(currentPersona.projects || []).filter(p => p.teamIds.includes(team.id)).map(p => (
+                <button key={p.id} onClick={() => navigate(`/project/${p.id}`)}
+                  className="flex items-center gap-1.5 px-2 py-1 rounded-md text-[10px] font-mono transition-colors"
+                  style={{ background: 'var(--c-accent-dim)', border: '1px solid var(--c-accent-border)', color: 'var(--c-accent)' }}>
+                  <FolderKanban size={9} /> {p.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Briefing */}
