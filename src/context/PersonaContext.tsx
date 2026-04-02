@@ -19,7 +19,7 @@ function inferTeamConfig(name: string, description: string, _leadName: string) {
 
   if (lower.includes('engineer') || lower.includes('develop') || lower.includes('code') || lower.includes('ship')) {
     return {
-      type: 'research' as TeamType,
+      type: 'engineering' as TeamType,
       personality: 'Systematic and ship-focused',
       leadDesc: `Engineering orchestrator who coordinates development agents, manages code quality, and keeps the team shipping.`,
       agents: [

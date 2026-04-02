@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Eye, Search, Pencil, Briefcase, ChevronRight, TrendingUp, TrendingDown, Bot, Terminal, LayoutGrid, Clock } from 'lucide-react';
+import { Eye, Search, Pencil, Briefcase, ChevronRight, TrendingUp, TrendingDown, Bot, Terminal, LayoutGrid, Clock, Code } from 'lucide-react';
 import type { Team, SubAgent } from '../data/types';
 import CountUp from './CountUp';
 import Sparkline from './Sparkline';
@@ -10,6 +10,7 @@ const typeConfig = {
   research: { label: 'Research', icon: Search, color: 'var(--c-research)' },
   content: { label: 'Creative', icon: Pencil, color: 'var(--c-content)' },
   bd: { label: 'Business Dev', icon: Briefcase, color: 'var(--c-bd)' },
+  engineering: { label: 'Engineering', icon: Code, color: '#60a5fa' },
 };
 
 function SubAgentPill({ agent }: { agent: SubAgent }) {

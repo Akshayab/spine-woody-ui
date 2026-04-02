@@ -88,6 +88,7 @@
   --color-research: var(--c-research);
   --color-content: var(--c-content);
   --color-bd: var(--c-bd);
+  --color-engineering: #60a5fa;
 }
 
 body {

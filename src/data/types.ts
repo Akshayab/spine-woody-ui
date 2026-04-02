@@ -1,4 +1,4 @@
-export type TeamType = 'monitoring' | 'research' | 'content' | 'bd';
+export type TeamType = 'monitoring' | 'research' | 'content' | 'bd' | 'engineering';
 
 export type ArtifactType = 'report' | 'spreadsheet' | 'memo' | 'document' | 'deck' | 'data-table';
 

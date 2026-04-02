@@ -9,8 +9,8 @@ import SandboxTerminal from '../components/SandboxTerminal';
 import Sparkline from '../components/Sparkline';
 import type { Artifact, TeamType, SubAgent, ChatMessage } from '../data/types';
 
-const typeColors: Record<TeamType, string> = { monitoring: '#d4a053', research: '#7a9ec2', content: '#b89ad4', bd: '#6ab89a' };
-const typeLabels: Record<TeamType, string> = { monitoring: 'Monitoring', research: 'Research', content: 'Creative', bd: 'Business Dev' };
+const typeColors: Record<TeamType, string> = { monitoring: '#d4a053', research: '#7a9ec2', content: '#b89ad4', bd: '#6ab89a', engineering: '#60a5fa' };
+const typeLabels: Record<TeamType, string> = { monitoring: 'Monitoring', research: 'Research', content: 'Creative', bd: 'Business Dev', engineering: 'Engineering' };
 
 const chatResponses: Record<string, string[]> = {
   monitoring: [
@@ -32,6 +32,11 @@ const chatResponses: Record<string, string[]> = {
     "RFP Scanner is checking against your criteria right now.",
     "Account Researcher is pulling background. I'll have a summary shortly.",
     "Proposal Writer is available. Setting up the canvas with key sections.",
+  ],
+  engineering: [
+    "Code Agent is picking that up. I'll have a PR ready for review shortly.",
+    "Running the test suite now. DevOps Agent is monitoring CI.",
+    "Good call. Spinning up Code Reviewer to audit that before we merge.",
   ],
 };
 
@@ -118,8 +123,15 @@ export default function TeamDetail() {
                 </div>
                 <p className="text-[12px]" style={{ color: 'var(--c-text-secondary)' }}>{team.lead.description}</p>
               </div>
-              <div className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
-                {runningAgents.length} / {team.subAgents.length} active
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
+                  {runningAgents.length} / {team.subAgents.length} active
+                </span>
+                <button onClick={(e) => { e.stopPropagation(); navigate(`/conversations?team=${team.id}`); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono transition-colors"
+                  style={{ background: `${color}12`, color, border: `1px solid ${color}20` }}>
+                  <MessageSquare size={11} /> Message
+                </button>
               </div>
             </div>
 
