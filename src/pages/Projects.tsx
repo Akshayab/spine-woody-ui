@@ -115,6 +115,30 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [autoSuggested, setAutoSuggested] = useState(false);
+
+  // Auto-suggest teams when description changes
+  const autoSuggestTeams = (desc: string) => {
+    if (autoSuggested || !desc.trim() || currentPersona.teams.length === 0) return;
+    const lower = desc.toLowerCase();
+    const suggested: string[] = [];
+    for (const team of currentPersona.teams) {
+      const teamWords = (team.name + ' ' + team.description + ' ' + team.lead.name).toLowerCase();
+      // Check if any words from description match team context
+      const descWords = lower.split(/\s+/).filter(w => w.length > 3);
+      if (descWords.some(w => teamWords.includes(w))) {
+        suggested.push(team.id);
+      }
+    }
+    // If we found matches, suggest them. Otherwise suggest all teams.
+    if (suggested.length >= 2) {
+      setSelectedTeams(suggested);
+      setAutoSuggested(true);
+    } else if (currentPersona.teams.length <= 3) {
+      setSelectedTeams(currentPersona.teams.map(t => t.id));
+      setAutoSuggested(true);
+    }
+  };
 
   const toggleTeam = (id: string) => {
     setSelectedTeams(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]);
@@ -140,12 +164,15 @@ function CreateProjectModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <label className="text-[10px] font-mono uppercase tracking-[0.1em] block mb-1" style={{ color: 'var(--c-text-muted)' }}>Description</label>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="What are you trying to accomplish?"
+            <textarea value={description} onChange={e => { setDescription(e.target.value); autoSuggestTeams(e.target.value); }} placeholder="What are you trying to accomplish?"
               rows={2} className="w-full px-4 py-2.5 rounded-xl text-[13px] focus:outline-none resize-none"
               style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-primary)' }} />
           </div>
           <div>
-            <label className="text-[10px] font-mono uppercase tracking-[0.1em] block mb-2" style={{ color: 'var(--c-text-muted)' }}>Contributing teams</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[10px] font-mono uppercase tracking-[0.1em]" style={{ color: 'var(--c-text-muted)' }}>Contributing teams</label>
+              {autoSuggested && <span className="text-[9px] font-mono" style={{ color: 'var(--c-accent)' }}>auto-selected based on description</span>}
+            </div>
             <div className="space-y-1.5">
               {currentPersona.teams.map(team => {
                 const isSelected = selectedTeams.includes(team.id);
