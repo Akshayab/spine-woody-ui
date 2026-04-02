@@ -173,12 +173,23 @@ export interface ChatThread {
   lastActivity: string;
 }
 
+export interface ProjectMilestone {
+  id: string;
+  label: string;
+  teamId?: string;
+  status: 'done' | 'in-progress' | 'pending';
+}
+
 export interface Project {
   id: string;
   name: string;
   description: string;
+  goal: string;
   personaId: string;
   teamIds: string[];
+  milestones: ProjectMilestone[];
+  status: 'on-track' | 'at-risk' | 'behind';
+  progress: number; // 0-100
   deadline?: { label: string; date: string; daysLeft: number };
   createdAt: string;
 }

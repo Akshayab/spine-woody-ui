@@ -58,12 +58,24 @@ export default function ProjectsPage() {
               className="rounded-2xl p-5 cursor-pointer group transition-all"
               style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)' }}>
 
-              <div className="flex items-start justify-between mb-3">
+              <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="text-[15px] font-semibold mb-1" style={{ color: 'var(--c-text-primary)' }}>{project.name}</h3>
-                  <p className="text-[12px] line-clamp-2" style={{ color: 'var(--c-text-secondary)' }}>{project.description}</p>
+                  <h3 className="text-[15px] font-semibold mb-0.5" style={{ color: 'var(--c-text-primary)' }}>{project.name}</h3>
+                  <p className="text-[12px] line-clamp-1" style={{ color: 'var(--c-text-muted)' }}>{project.goal || project.description}</p>
                 </div>
-                <FolderKanban size={16} style={{ color: 'var(--c-accent)', opacity: 0.5 }} />
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full shrink-0"
+                  style={{ background: project.status === 'at-risk' ? 'rgba(245,158,11,0.08)' : project.status === 'behind' ? 'rgba(239,68,68,0.08)' : 'var(--c-accent-dim)',
+                    color: project.status === 'at-risk' ? '#f59e0b' : project.status === 'behind' ? '#ef4444' : 'var(--c-accent)' }}>
+                  {project.status === 'at-risk' ? 'At risk' : project.status === 'behind' ? 'Behind' : 'On track'}
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--c-border)' }}>
+                  <div className="h-full rounded-full" style={{ width: `${project.progress}%`, background: project.status === 'at-risk' ? '#f59e0b' : 'var(--c-accent)' }} />
+                </div>
+                <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{project.progress}%</span>
               </div>
 
               {/* Contributing teams */}
