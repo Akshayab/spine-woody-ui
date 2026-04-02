@@ -14,29 +14,29 @@ const typeLabels: Record<TeamType, string> = { monitoring: 'Monitoring', researc
 
 const chatResponses: Record<string, string[]> = {
   monitoring: [
-    "Running a scan now. Price Tracker is pulling fresh data from all tracked sources.",
-    "I'll spin up a sub-agent to investigate. Results within the hour.",
-    "Checking now. Social Monitor is cross-referencing the latest posts.",
+    "Price Tracker (core) is pulling fresh data now.",
+    "I'll spin up a task agent for that research. Dedicated focus, results within the hour.",
+    "Social Monitor is on it. If this needs a deep dive, I'll spin up a task agent.",
   ],
   research: [
-    "Good question. Let me get Trend Analyst to look into that specifically.",
-    "Web Crawler is on it. I'll have sources gathered within 30 minutes.",
-    "Starting analysis now. Report Builder will format the findings once ready.",
+    "Spinning up a task agent for this — dedicated research, will deliver a report then complete.",
+    "Trend Analyst (core) can handle this. Analysis ready shortly.",
+    "This needs focused work. Task agent spinning up with web research skills.",
   ],
   content: [
-    "Content Drafter is starting a canvas for this. First draft in ~45 minutes.",
-    "I'll pull the latest market data into the brief first, then draft options.",
-    "Campaign Builder can handle that. Setting up the sandbox now.",
+    "Content Drafter (core) is starting a canvas for this.",
+    "Spinning up a task agent to explore options — it'll produce drafts then hand off to Content Drafter.",
+    "Campaign Builder is on it. I'll spin up a task agent if we need variants.",
   ],
   bd: [
-    "RFP Scanner is checking against your criteria right now.",
-    "Account Researcher is pulling background. I'll have a summary shortly.",
-    "Proposal Writer is available. Setting up the canvas with key sections.",
+    "RFP Scanner (core) is checking criteria now.",
+    "Spinning up a task agent to research this prospect. Core agents stay on pipeline.",
+    "Proposal Writer is assigned. Will produce the draft and complete.",
   ],
   engineering: [
-    "Code Agent is picking that up. I'll have a PR ready for review shortly.",
-    "Running the test suite now. DevOps Agent is monitoring CI.",
-    "Good call. Spinning up Code Reviewer to audit that before we merge.",
+    "Code Agent (core) is picking that up. PR ready shortly.",
+    "Spinning up a task agent for this investigation. Core agents stay on main codebase.",
+    "Code Reviewer will audit. If we need fixes, I'll spin up a task agent to implement.",
   ],
 };
 
@@ -135,19 +135,54 @@ export default function TeamDetail() {
               </div>
             </div>
 
-            {/* Agents */}
-            <div className="mb-3">
-              <h3 className="text-[10px] font-mono uppercase tracking-[0.12em]" style={{ color: 'var(--c-text-muted)' }}>Agents</h3>
-            </div>
+            {/* Core agents — always present */}
+            {team.subAgents.filter(a => a.lifecycle !== 'task').length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.12em] mb-3" style={{ color: 'var(--c-text-muted)' }}>Core agents</h3>
+                <div className="space-y-2">
+                  {team.subAgents.filter(a => a.lifecycle !== 'task').map((agent, i) => (
+                    <SubAgentCard key={agent.id} agent={agent} color={color} index={i}
+                      expanded={expandedAgent === agent.id}
+                      onToggle={() => setExpandedAgent(expandedAgent === agent.id ? null : agent.id)} />
+                  ))}
+                </div>
+              </div>
+            )}
 
-            {/* Agents */}
-            <div className="space-y-3">
-              {team.subAgents.map((agent, i) => (
-                <SubAgentCard key={agent.id} agent={agent} color={color} index={i}
-                  expanded={expandedAgent === agent.id}
-                  onToggle={() => setExpandedAgent(expandedAgent === agent.id ? null : agent.id)} />
-              ))}
-            </div>
+            {/* Task agents — spun up for specific jobs */}
+            {team.subAgents.filter(a => a.lifecycle === 'task' && a.status !== 'completed').length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.12em] mb-3 flex items-center gap-2" style={{ color: 'var(--c-text-muted)' }}>
+                  Active tasks
+                  <span className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--c-accent-dim)', color: 'var(--c-accent)' }}>
+                    {team.subAgents.filter(a => a.lifecycle === 'task' && a.status !== 'completed').length}
+                  </span>
+                </h3>
+                <div className="space-y-2">
+                  {team.subAgents.filter(a => a.lifecycle === 'task' && a.status !== 'completed').map((agent, i) => (
+                    <SubAgentCard key={agent.id} agent={agent} color={color} index={i}
+                      expanded={expandedAgent === agent.id}
+                      onToggle={() => setExpandedAgent(expandedAgent === agent.id ? null : agent.id)} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Completed task agents — history */}
+            {team.subAgents.filter(a => a.lifecycle === 'task' && a.status === 'completed').length > 0 && (
+              <div className="mb-4">
+                <h3 className="text-[10px] font-mono uppercase tracking-[0.12em] mb-3" style={{ color: 'var(--c-text-muted)' }}>
+                  Completed tasks · {team.subAgents.filter(a => a.lifecycle === 'task' && a.status === 'completed').length}
+                </h3>
+                <div className="space-y-2 opacity-60">
+                  {team.subAgents.filter(a => a.lifecycle === 'task' && a.status === 'completed').map((agent, i) => (
+                    <SubAgentCard key={agent.id} agent={agent} color={color} index={i}
+                      expanded={expandedAgent === agent.id}
+                      onToggle={() => setExpandedAgent(expandedAgent === agent.id ? null : agent.id)} />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Automations */}
             <div className="mt-6">
@@ -344,11 +379,17 @@ function SubAgentCard({ agent, color, index, expanded, onToggle }: { agent: SubA
         <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: isCanvas ? `${color}10` : 'rgba(74, 222, 128, 0.08)' }}>
           {isCanvas ? <LayoutGrid size={14} style={{ color }} /> : <Terminal size={14} style={{ color: 'var(--c-terminal-text)' }} />}
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-[13px] font-medium" style={{ color: 'var(--c-text-primary)' }}>{agent.name}</span>
             <span className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--c-surface-2)', color: 'var(--c-text-muted)' }}>{agent.role}</span>
+            {agent.lifecycle === 'task' && (
+              <span className="text-[8px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--c-teal-dim)', color: 'var(--c-teal)' }}>task</span>
+            )}
           </div>
+          {agent.task && (
+            <div className="text-[10px] mt-0.5 truncate" style={{ color: 'var(--c-text-muted)' }}>{agent.task}</div>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {agent.progress !== undefined && agent.status === 'running' && (

@@ -32,10 +32,13 @@ export interface SandboxWorkspace {
   files: string[];
 }
 
+export type AgentLifecycle = 'core' | 'task';
+
 export interface SubAgent {
   id: string;
   name: string;
   role: string;
+  lifecycle: AgentLifecycle;
   status: SubAgentStatus;
   workspace: CanvasWorkspace | SandboxWorkspace;
   artifacts: Artifact[];
@@ -43,6 +46,7 @@ export interface SubAgent {
   completedAt?: string;
   progress?: number; // 0-100
   skills?: string[];
+  task?: string; // for task agents: what specific task they were spun up for
 }
 
 export interface TeamTerminal {
@@ -95,6 +99,7 @@ export interface TeamLead {
   name: string;
   personality: string;
   description: string;
+  skills?: string[]; // skills the lead can orchestrate
 }
 
 export interface Team {

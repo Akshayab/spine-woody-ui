@@ -203,7 +203,7 @@ export function PersonaProvider({ children }: { children: ReactNode }) {
       const agent1 = config.agents[0];
       const subAgent1: SubAgent = {
         id: `${teamId}-sa1`, name: agent1.name, role: agent1.role,
-        status: 'running', progress: 15, skills: agent1.skills,
+        lifecycle: 'core', status: 'running', progress: 15, skills: agent1.skills,
         startedAt: '1 minute ago',
         workspace: agent1.workspaceType === 'sandbox' ? {
           type: 'sandbox',
@@ -252,7 +252,7 @@ export function PersonaProvider({ children }: { children: ReactNode }) {
       const agent2 = config.agents[1];
       const subAgent2: SubAgent = {
         id: `${teamId}-sa2`, name: agent2.name, role: agent2.role,
-        status: 'running', progress: 10, skills: agent2.skills,
+        lifecycle: 'core', status: 'running', progress: 10, skills: agent2.skills,
         startedAt: 'Just now',
         workspace: agent2.workspaceType === 'sandbox' ? {
           type: 'sandbox',
@@ -319,7 +319,7 @@ export function PersonaProvider({ children }: { children: ReactNode }) {
               const agent3 = config.agents[2];
               agents = [...agents, {
                 id: `${teamId}-sa3`, name: agent3.name, role: agent3.role,
-                status: 'running' as const, progress: 5, skills: agent3.skills,
+                lifecycle: 'core' as const, status: 'running' as const, progress: 5, skills: agent3.skills,
                 startedAt: 'Just now', artifacts: [],
                 workspace: agent3.workspaceType === 'sandbox' ? {
                   type: 'sandbox' as const,
