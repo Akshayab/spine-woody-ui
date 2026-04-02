@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, FolderKanban, Bot, ChevronRight, ArrowUp, FileText, FileSpreadsheet, Presentation, Table2, StickyNote, MessageSquare } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Clock, FolderKanban, Bot, ChevronDown, ArrowUp, FileText, FileSpreadsheet, Presentation, Table2, StickyNote, MessageSquare, Terminal, LayoutGrid, ExternalLink } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
 import ArtifactPreview from '../components/ArtifactPreview';
+import CanvasDAG from '../components/CanvasDAG';
+import SandboxTerminal from '../components/SandboxTerminal';
 import type { Artifact, TeamType, ChatMessage } from '../data/types';
 
 const typeColors: Record<TeamType, string> = { monitoring: '#d4a053', research: '#7a9ec2', content: '#b89ad4', bd: '#6ab89a', engineering: '#60a5fa' };
@@ -16,6 +18,8 @@ export default function ProjectDetail() {
   const { currentPersona } = usePersona();
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact | null>(null);
   const [showChat, setShowChat] = useState(false);
+  const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
+  const [expandedAgent, setExpandedAgent] = useState<string | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
@@ -33,16 +37,11 @@ export default function ProjectDetail() {
 
   const handleChatSend = () => {
     if (!chatInput.trim()) return;
-    const userMsg: ChatMessage = { id: `pc-u-${Date.now()}`, sender: 'user', text: chatInput, timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) };
-    setChatMessages(prev => [...prev, userMsg]);
+    setChatMessages(prev => [...prev, { id: `pc-u-${Date.now()}`, sender: 'user', text: chatInput, timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }]);
     setChatInput('');
     setTimeout(() => {
       const leadNames = teams.map(t => t.lead.name).join(' and ');
-      setChatMessages(prev => [...prev, {
-        id: `pc-s-${Date.now()}`, sender: 'system',
-        text: `${leadNames}: We're coordinating on this across teams. I'll route to the right agents and keep you updated.`,
-        timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }),
-      }]);
+      setChatMessages(prev => [...prev, { id: `pc-s-${Date.now()}`, sender: 'system', text: `${leadNames}: Coordinating across teams on this. Routing to the right agents now.`, timestamp: new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) }]);
     }, 800);
   };
 
@@ -69,13 +68,13 @@ export default function ProjectDetail() {
       </div>
 
       <div className="px-8 pb-8">
+        {/* Title + team dots */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-1">
             <FolderKanban size={16} style={{ color: 'var(--c-accent)' }} />
             <h1 className="text-2xl font-light tracking-tight" style={{ color: 'var(--c-text-primary)' }}>{project.name}</h1>
           </div>
           <p className="text-[12px] max-w-2xl" style={{ color: 'var(--c-text-muted)' }}>{project.description}</p>
-          {/* Team dots inline */}
           <div className="flex items-center gap-3 mt-2">
             {teams.map(t => (
               <span key={t.id} className="flex items-center gap-1.5 text-[11px]" style={{ color: 'var(--c-text-secondary)' }}>
@@ -87,40 +86,126 @@ export default function ProjectDetail() {
         </div>
 
         <div className={`grid gap-6 ${showChat ? 'grid-cols-[1fr_320px]' : 'grid-cols-1'}`}>
-          {/* LEFT: Teams + Artifacts */}
+          {/* MAIN CONTENT */}
           <div>
-            {/* Contributing teams */}
+            {/* Teams — inline expandable, no navigation away */}
             <div className="mb-6">
               <h3 className="text-[10px] font-mono uppercase tracking-[0.12em] mb-3" style={{ color: 'var(--c-text-muted)' }}>Teams</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div className="space-y-2">
                 {teams.map(team => {
                   const color = typeColors[team.type] || '#d4a053';
                   const running = team.subAgents.filter(a => a.status === 'running');
+                  const isExpanded = expandedTeam === team.id;
+
                   return (
-                    <div key={team.id} onClick={() => navigate(`/team/${team.id}`)}
-                      className="flex items-center gap-3 rounded-xl px-4 py-3 cursor-pointer group transition-all"
-                      style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)' }}>
-                      <div className="w-1.5 h-6 rounded-full" style={{ background: color }} />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[13px] font-medium truncate" style={{ color: 'var(--c-text-primary)' }}>{team.name}</div>
-                        <div className="flex items-center gap-1.5">
-                          <Bot size={9} style={{ color }} />
+                    <div key={team.id} className="rounded-xl overflow-hidden" style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)' }}>
+                      {/* Team header — click to expand, not navigate */}
+                      <button onClick={() => setExpandedTeam(isExpanded ? null : team.id)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors">
+                        <div className="w-1.5 h-6 rounded-full" style={{ background: color }} />
+                        <Bot size={14} style={{ color }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13px] font-medium" style={{ color: 'var(--c-text-primary)' }}>{team.name}</div>
                           <span className="text-[10px]" style={{ color: 'var(--c-text-muted)' }}>
-                            {team.lead.name} · {running.length > 0 ? `${running.length} working` : 'idle'}
+                            {team.lead.name} · {running.length > 0 ? `${running.length} working` : 'idle'} · {team.artifacts.length} artifacts
                           </span>
                         </div>
-                      </div>
-                      <ChevronRight size={12} style={{ color: 'var(--c-text-muted)', opacity: 0.2 }} className="group-hover:opacity-60 transition-opacity" />
+                        <ChevronDown size={14} style={{ color: 'var(--c-text-muted)', transform: isExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+                      </button>
+
+                      {/* Expanded: agents + artifacts + link to full team */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+                            <div className="px-4 pb-4 border-t" style={{ borderColor: 'var(--c-border)' }}>
+                              {/* Agents */}
+                              {team.subAgents.length > 0 && (
+                                <div className="mt-3 mb-3">
+                                  <div className="text-[9px] font-mono uppercase tracking-[0.12em] mb-2" style={{ color: 'var(--c-text-muted)' }}>Agents</div>
+                                  <div className="space-y-1.5">
+                                    {team.subAgents.map(agent => {
+                                      const isAgentExpanded = expandedAgent === agent.id;
+                                      const isCanvas = agent.workspace.type === 'canvas';
+                                      return (
+                                        <div key={agent.id} className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--c-border)' }}>
+                                          <button onClick={() => setExpandedAgent(isAgentExpanded ? null : agent.id)}
+                                            className="w-full flex items-center gap-2.5 px-3 py-2 text-left">
+                                            {isCanvas ? <LayoutGrid size={11} style={{ color }} /> : <Terminal size={11} style={{ color: 'var(--c-terminal-text)' }} />}
+                                            <span className="text-[12px]" style={{ color: 'var(--c-text-primary)' }}>{agent.name}</span>
+                                            <span className="text-[9px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{agent.role}</span>
+                                            {agent.progress !== undefined && agent.status === 'running' && (
+                                              <div className="flex items-center gap-1 ml-auto">
+                                                <div className="w-12 h-1 rounded-full overflow-hidden" style={{ background: 'var(--c-border)' }}>
+                                                  <div className="h-full rounded-full" style={{ width: `${agent.progress}%`, background: color }} />
+                                                </div>
+                                                <span className="text-[9px] font-mono" style={{ color }}>{agent.progress}%</span>
+                                              </div>
+                                            )}
+                                            {agent.status === 'completed' && <span className="text-[9px] font-mono ml-auto" style={{ color: 'var(--c-text-muted)' }}>done</span>}
+                                          </button>
+                                          <AnimatePresence>
+                                            {isAgentExpanded && (
+                                              <motion.div initial={{ height: 0 }} animate={{ height: 'auto' }} exit={{ height: 0 }} className="overflow-hidden">
+                                                <div className="px-3 pb-3">
+                                                  <div className="rounded-lg overflow-hidden" style={{ border: '1px solid var(--c-border)' }}>
+                                                    {agent.workspace.type === 'canvas' ? (
+                                                      <CanvasDAG blocks={agent.workspace.blocks} edges={agent.workspace.edges} color={color} height={140} />
+                                                    ) : (
+                                                      <SandboxTerminal lines={agent.workspace.terminalLines} files={agent.workspace.files} height={120} />
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </motion.div>
+                                            )}
+                                          </AnimatePresence>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Team artifacts inline */}
+                              {team.artifacts.length > 0 && (
+                                <div className="mb-3">
+                                  <div className="text-[9px] font-mono uppercase tracking-[0.12em] mb-2" style={{ color: 'var(--c-text-muted)' }}>Artifacts</div>
+                                  <div className="space-y-1">
+                                    {team.artifacts.slice(0, 4).map(a => {
+                                      const AIcon = artifactIcons[a.type] || FileText;
+                                      const ac = artifactColors[a.type] || '#d4a053';
+                                      return (
+                                        <div key={a.id} onClick={() => setSelectedArtifact(a)}
+                                          className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors"
+                                          style={{ background: 'var(--c-surface-2)' }}>
+                                          <AIcon size={11} style={{ color: ac }} />
+                                          <span className="text-[11px] truncate flex-1" style={{ color: 'var(--c-text-primary)' }}>{a.title}</span>
+                                          <span className="text-[9px] font-mono shrink-0" style={{ color: 'var(--c-text-muted)' }}>{a.daysAgo === 0 ? 'Today' : `${a.daysAgo}d`}</span>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
+                              <button onClick={() => navigate(`/team/${team.id}`)}
+                                className="flex items-center gap-1.5 text-[11px] font-mono transition-colors"
+                                style={{ color: 'var(--c-accent)' }}>
+                                <ExternalLink size={10} /> Open full team view
+                              </button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Artifacts */}
+            {/* All artifacts across teams */}
             <div>
               <h3 className="text-[10px] font-mono uppercase tracking-[0.12em] mb-3" style={{ color: 'var(--c-text-muted)' }}>
-                Artifacts · {allArtifacts.length} across {teams.length} teams
+                All artifacts · {allArtifacts.length}
               </h3>
               <div className={`grid gap-2 ${showChat ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'}`}>
                 {allArtifacts.slice(0, 9).map(artifact => {
@@ -151,21 +236,19 @@ export default function ProjectDetail() {
             </div>
           </div>
 
-          {/* RIGHT: Chat panel (toggle) */}
+          {/* Chat panel */}
           {showChat && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
               className="flex flex-col rounded-xl overflow-hidden" style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', height: '480px' }}>
               <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--c-border)' }}>
                 <span className="text-[12px] font-medium" style={{ color: 'var(--c-text-primary)' }}>Project chat</span>
-                <div className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--c-text-muted)' }}>
-                  {teams.map(t => t.lead.name).join(', ')}
-                </div>
+                <div className="text-[10px] font-mono mt-0.5" style={{ color: 'var(--c-text-muted)' }}>{teams.map(t => t.lead.name).join(', ')}</div>
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
                 {chatMessages.length === 0 && (
                   <div className="text-center py-8">
                     <FolderKanban size={20} style={{ color: 'var(--c-accent)', opacity: 0.3 }} className="mx-auto mb-2" />
-                    <p className="text-[11px] font-mono" style={{ color: 'var(--c-text-muted)' }}>Message all team leads working on this project</p>
+                    <p className="text-[11px] font-mono" style={{ color: 'var(--c-text-muted)' }}>Message all team leads</p>
                   </div>
                 )}
                 {chatMessages.map(msg => (
@@ -174,7 +257,6 @@ export default function ProjectDetail() {
                     <div className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${msg.sender === 'user' ? 'rounded-br-md' : 'rounded-bl-md'}`}
                       style={{ background: msg.sender === 'user' ? 'var(--c-accent)' : 'var(--c-surface-2)', color: msg.sender === 'user' ? 'white' : 'var(--c-text-primary)', border: msg.sender === 'system' ? '1px solid var(--c-border)' : 'none' }}>
                       <p className="text-[12px] leading-relaxed whitespace-pre-line">{msg.text}</p>
-                      <div className="text-[8px] font-mono mt-1" style={{ opacity: 0.4 }}>{msg.timestamp}</div>
                     </div>
                   </motion.div>
                 ))}
