@@ -7,6 +7,7 @@ import ArtifactPreview from '../components/ArtifactPreview';
 import CanvasDAG from '../components/CanvasDAG';
 import SandboxTerminal from '../components/SandboxTerminal';
 import type { Artifact, TeamType, ChatMessage } from '../data/types';
+import { getProjectProgress } from '../data/types';
 
 const typeColors: Record<TeamType, string> = { monitoring: '#d4a053', research: '#7a9ec2', content: '#b89ad4', bd: '#6ab89a', engineering: '#60a5fa' };
 const artifactIcons: Record<string, typeof FileText> = { report: FileText, spreadsheet: FileSpreadsheet, memo: StickyNote, document: FileText, deck: Presentation, 'data-table': Table2 };
@@ -37,6 +38,7 @@ export default function ProjectDetail() {
   const allArtifacts = teams.flatMap(t => t.artifacts.map(a => ({ ...a, teamName: t.name, teamType: t.type }))).sort((a, b) => a.daysAgo - b.daysAgo);
   const sc = statusConfig[project.status] || statusConfig['on-track'];
   const doneCount = project.milestones.filter(m => m.status === 'done').length;
+  const progress = getProjectProgress(project);
 
   const handleChatSend = () => {
     if (!chatInput.trim()) return;
@@ -78,9 +80,9 @@ export default function ProjectDetail() {
           {/* Progress bar */}
           <div className="flex items-center gap-3 mt-3">
             <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'var(--c-border)' }}>
-              <div className="h-full rounded-full transition-all" style={{ width: `${project.progress}%`, background: sc.color }} />
+              <div className="h-full rounded-full transition-all" style={{ width: `${progress}%`, background: sc.color }} />
             </div>
-            <span className="text-[12px] font-mono font-semibold" style={{ color: sc.color }}>{project.progress}%</span>
+            <span className="text-[12px] font-mono font-semibold" style={{ color: sc.color }}>{progress}%</span>
           </div>
           <div className="flex items-center gap-3 mt-2">
             {teams.map(t => (
@@ -103,7 +105,7 @@ export default function ProjectDetail() {
               </h3>
               <div className="space-y-1">
                 {project.milestones.map(m => {
-                  const mTeam = m.teamId ? teams.find(t => t.id === m.teamId) : null;
+                  const mTeams = m.teamIds ? teams.filter(t => m.teamIds!.includes(t.id)) : [];
                   return (
                     <div key={m.id} className="flex items-center gap-3 px-4 py-2.5 rounded-xl"
                       style={{ background: m.status === 'done' ? 'transparent' : 'var(--c-surface)', border: m.status === 'done' ? '1px solid transparent' : '1px solid var(--c-border)' }}>
@@ -113,11 +115,15 @@ export default function ProjectDetail() {
                       <span className="text-[13px] flex-1" style={{ color: m.status === 'done' ? 'var(--c-text-muted)' : 'var(--c-text-primary)', textDecoration: m.status === 'done' ? 'line-through' : 'none', opacity: m.status === 'done' ? 0.6 : 1 }}>
                         {m.label}
                       </span>
-                      {mTeam && (
-                        <span className="flex items-center gap-1.5 text-[9px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
-                          <div className="w-1.5 h-1.5 rounded-full" style={{ background: typeColors[mTeam.type] || 'var(--c-accent)' }} />
-                          {mTeam.name}
-                        </span>
+                      {mTeams.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          {mTeams.map(t => (
+                            <span key={t.id} className="flex items-center gap-1 text-[9px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
+                              <div className="w-1.5 h-1.5 rounded-full" style={{ background: typeColors[t.type] || 'var(--c-accent)' }} />
+                              {t.name.length > 15 ? t.name.slice(0, 13) + '..' : t.name}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
                   );

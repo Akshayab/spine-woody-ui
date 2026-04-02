@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Clock, FolderKanban, X, Check } from 'lucide-react';
 import { usePersona } from '../context/PersonaContext';
+import { getProjectProgress } from '../data/types';
 
 const typeColors: Record<string, string> = { monitoring: 'var(--c-monitoring)', research: 'var(--c-research)', content: 'var(--c-content)', bd: 'var(--c-bd)', engineering: '#60a5fa' };
 
@@ -73,9 +74,9 @@ export default function ProjectsPage() {
               {/* Progress bar */}
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--c-border)' }}>
-                  <div className="h-full rounded-full" style={{ width: `${project.progress}%`, background: project.status === 'at-risk' ? '#f59e0b' : 'var(--c-accent)' }} />
+                  <div className="h-full rounded-full" style={{ width: `${getProjectProgress(project)}%`, background: project.status === 'at-risk' ? '#f59e0b' : 'var(--c-accent)' }} />
                 </div>
-                <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{project.progress}%</span>
+                <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{getProjectProgress(project)}%</span>
               </div>
 
               {/* Contributing teams */}

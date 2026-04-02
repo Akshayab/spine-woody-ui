@@ -176,7 +176,7 @@ export interface ChatThread {
 export interface ProjectMilestone {
   id: string;
   label: string;
-  teamId?: string;
+  teamIds?: string[]; // can involve multiple teams
   status: 'done' | 'in-progress' | 'pending';
 }
 
@@ -189,9 +189,16 @@ export interface Project {
   teamIds: string[];
   milestones: ProjectMilestone[];
   status: 'on-track' | 'at-risk' | 'behind';
-  progress: number; // 0-100
   deadline?: { label: string; date: string; daysLeft: number };
   createdAt: string;
+}
+
+// Computed — not stored
+export function getProjectProgress(project: Project): number {
+  if (project.milestones.length === 0) return 0;
+  const done = project.milestones.filter(m => m.status === 'done').length;
+  const inProgress = project.milestones.filter(m => m.status === 'in-progress').length;
+  return Math.round(((done + inProgress * 0.5) / project.milestones.length) * 100);
 }
 
 export interface Persona {
