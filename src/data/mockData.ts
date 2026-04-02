@@ -1199,6 +1199,26 @@ const woodyTeams: Team[] = [
         artifacts: [],
         startedAt: '2026-03-28T10:00:00Z',
       },
+      {
+        id: 'w-mr-sa-task1', name: 'Vero Wines Researcher', role: 'Competitor deep dive',
+        lifecycle: 'task', task: 'Research new competitor Vero Wines — founder, pricing, distribution',
+        status: 'running', progress: 35, startedAt: '2 hours ago',
+        skills: ['competitor research', 'web scraping', 'brand analysis'],
+        workspace: { type: 'canvas', blocks: [
+          { id: 'tb1', label: 'Scrape DTC site', type: 'web-scrape', status: 'done' },
+          { id: 'tb2', label: 'Social profiles', type: 'search', status: 'running' },
+          { id: 'tb3', label: 'Compile report', type: 'memo', status: 'queued' },
+        ], edges: [{ from: 'tb1', to: 'tb2' }, { from: 'tb2', to: 'tb3' }] },
+        artifacts: [],
+      },
+      {
+        id: 'w-mr-sa-task2', name: 'Expo Exhibitor Scanner', role: 'Event research',
+        lifecycle: 'task', task: 'Scan Chicago Wine Expo exhibitor list and profile competitors',
+        status: 'completed', startedAt: '3 days ago', completedAt: '2 days ago',
+        skills: ['event research', 'web scraping', 'data extraction'],
+        workspace: { type: 'sandbox', terminalLines: ['$ python3 scan_exhibitors.py --event "Chicago Wine Expo 2026"', 'Found 142 exhibitors', '$ python3 profile_competitors.py', 'Profiled 8 direct competitors'], files: ['exhibitors.json', 'competitor-profiles.json'] },
+        artifacts: [],
+      },
     ],
     kpis: [
       { label: 'Sources Monitored', value: 47, change: '+3 this week', trend: 'up', sparkline: [38, 40, 41, 43, 44, 45, 47] },
@@ -1361,6 +1381,14 @@ const woodyTeams: Team[] = [
         },
         artifacts: [],
       },
+      {
+        id: 'w-cw-sa-task2', name: 'Vero Pricing Analyst', role: 'New competitor pricing',
+        lifecycle: 'task', task: 'Track Vero Wines initial DTC pricing and compare to market',
+        status: 'running', progress: 60, startedAt: '1 day ago',
+        skills: ['price monitoring', 'market comparison'],
+        workspace: { type: 'sandbox', terminalLines: ['$ curl -s https://verowines.com/shop | python3 extract_prices.py', 'Found 3 SKUs: Pinot ($35), Grenache ($32), Field Blend ($28)', '$ python3 compare_market.py --segment "natural-red-20-40"', 'Positioning: premium-mid range, DTC-only'], files: ['vero-prices.json', 'market-comparison.csv'] },
+        artifacts: [],
+      },
     ],
     kpis: [
       { label: 'Brands Tracked', value: 8, trend: 'neutral', sparkline: [8, 8, 8, 8, 8, 8, 8] },
@@ -1474,6 +1502,26 @@ const woodyTeams: Team[] = [
         artifacts: [],
         startedAt: '2026-03-29T10:00:00Z',
         completedAt: '2026-03-29T10:35:00Z',
+      },
+      {
+        id: 'w-cm-sa-task1', name: 'Scribe Response Writer', role: 'Competitive response',
+        lifecycle: 'task', task: 'Draft blog post responding to Scribe Winery price drop',
+        status: 'running', progress: 70, startedAt: '4 hours ago',
+        skills: ['copywriting', 'competitive positioning'],
+        workspace: { type: 'canvas', blocks: [
+          { id: 'tb1', label: 'Research angle', type: 'analysis', status: 'done' },
+          { id: 'tb2', label: 'Draft post', type: 'prompt', status: 'running' },
+          { id: 'tb3', label: 'Brand voice check', type: 'analysis', status: 'queued' },
+        ], edges: [{ from: 'tb1', to: 'tb2' }, { from: 'tb2', to: 'tb3' }] },
+        artifacts: [],
+      },
+      {
+        id: 'w-cm-sa-task2', name: 'Valentine Campaign Writer', role: 'Seasonal campaign',
+        lifecycle: 'task', task: 'Create Valentine\'s Day wine pairing campaign',
+        status: 'completed', startedAt: '3 weeks ago', completedAt: '2 weeks ago',
+        skills: ['campaign creation', 'seasonal marketing'],
+        workspace: { type: 'canvas', blocks: [{ id: 'tb1', label: 'Campaign brief', type: 'prompt', status: 'done' }], edges: [] },
+        artifacts: [],
       },
     ],
     kpis: [
@@ -1622,6 +1670,18 @@ const sarahTeams: Team[] = [
         startedAt: '2026-03-28T08:00:00Z',
         completedAt: '2026-03-28T08:28:00Z',
       },
+      {
+        id: 's-np-sa-task1', name: 'Fast-Track Evaluator', role: 'Regulatory pathway analysis',
+        lifecycle: 'task', task: 'Evaluate whether NovaPharma compound qualifies for new FDA fast-track criteria',
+        status: 'running', progress: 40, startedAt: '4 hours ago',
+        skills: ['regulatory analysis', 'clinical pathway evaluation'],
+        workspace: { type: 'canvas', blocks: [
+          { id: 'tb1', label: 'Parse FDA guidance', type: 'data', status: 'done' },
+          { id: 'tb2', label: 'Match to compound', type: 'analysis', status: 'running' },
+          { id: 'tb3', label: 'Write assessment', type: 'memo', status: 'queued' },
+        ], edges: [{ from: 'tb1', to: 'tb2' }, { from: 'tb2', to: 'tb3' }] },
+        artifacts: [],
+      },
     ],
     kpis: [
       { label: 'Pipeline Entries Tracked', value: 24, change: '+3 this month', trend: 'up', sparkline: [18, 19, 20, 21, 21, 23, 24] },
@@ -1743,6 +1803,14 @@ const sarahTeams: Team[] = [
         artifacts: [],
         startedAt: '2026-03-26T09:00:00Z',
         completedAt: '2026-03-26T10:05:00Z',
+      },
+      {
+        id: 's-gb-sa-task1', name: 'Competitor Mapper', role: 'Market entry analysis',
+        lifecycle: 'task', task: 'Map competitive landscape for Pacific Northwest sustainable construction',
+        status: 'completed', startedAt: '1 week ago', completedAt: '5 days ago',
+        skills: ['competitive mapping', 'market analysis'],
+        workspace: { type: 'sandbox', terminalLines: ['$ python3 map_competitors.py --region PNW --sector sustainable-construction', 'Found 23 competitors in region', '$ python3 score_competitors.py', 'Scored and ranked by market fit'], files: ['pnw-competitors.json', 'competitive-landscape.pdf'] },
+        artifacts: [],
       },
     ],
     kpis: [
@@ -2040,6 +2108,14 @@ const marcusTeams: Team[] = [
         startedAt: '2026-03-28T09:00:00Z',
         completedAt: '2026-03-28T09:32:00Z',
       },
+      {
+        id: 'm-ci-sa-task1', name: 'Stripe Pricing Modeler', role: 'Pricing scenario analysis',
+        lifecycle: 'task', task: 'Model 3 pricing response scenarios to Stripe Connect fee reduction',
+        status: 'running', progress: 45, startedAt: '6 hours ago',
+        skills: ['financial modeling', 'pricing analysis', 'scenario planning'],
+        workspace: { type: 'sandbox', terminalLines: ['$ python3 pricing_model.py --competitor stripe --change "-0.1%"', 'Modeling 3 scenarios...', 'Scenario 1: Match at 0.4% — revenue impact -$180K/yr', 'Scenario 2: Volume tier at 0.4% for >$10M — impact -$90K/yr', 'Scenario 3: Hold + add value (BNPL, instant payouts) — impact neutral'], files: ['pricing-scenarios.xlsx', 'revenue-impact.json'] },
+        artifacts: [],
+      },
     ],
     kpis: [
       { label: 'Competitors Tracked', value: 10, trend: 'neutral', sparkline: [10, 10, 10, 10, 10, 10, 10] },
@@ -2183,6 +2259,18 @@ const marcusTeams: Team[] = [
         },
         artifacts: [],
       },
+      {
+        id: 'm-ur-sa-task2', name: 'BNPL Survey Analyst', role: 'Feature demand analysis',
+        lifecycle: 'task', task: 'Analyze BNPL demand data across all research streams',
+        status: 'running', progress: 55, startedAt: '1 day ago',
+        skills: ['survey analysis', 'cross-stream synthesis'],
+        workspace: { type: 'canvas', blocks: [
+          { id: 'tb1', label: 'Gather BNPL mentions', type: 'data', status: 'done' },
+          { id: 'tb2', label: 'Cross-reference streams', type: 'analysis', status: 'running' },
+          { id: 'tb3', label: 'Priority brief', type: 'memo', status: 'queued' },
+        ], edges: [{ from: 'tb1', to: 'tb2' }, { from: 'tb2', to: 'tb3' }] },
+        artifacts: [],
+      },
     ],
     kpis: [
       { label: 'Interviews Processed', value: 20, change: '+4 this week', trend: 'up', sparkline: [8, 10, 12, 14, 16, 18, 20] },
@@ -2298,6 +2386,14 @@ const marcusTeams: Team[] = [
         },
         artifacts: [],
         startedAt: '2026-03-30T09:30:00Z',
+      },
+      {
+        id: 'm-su-sa-task1', name: 'Q4 Deck Builder', role: 'Quarterly presentation',
+        lifecycle: 'task', task: 'Build Q4 2025 roadmap review deck from sprint data',
+        status: 'completed', startedAt: '2 weeks ago', completedAt: '1 week ago',
+        skills: ['deck creation', 'data visualization', 'executive communication'],
+        workspace: { type: 'canvas', blocks: [{ id: 'tb1', label: 'Compile metrics', type: 'data', status: 'done' }, { id: 'tb2', label: 'Build slides', type: 'slides', status: 'done' }], edges: [{ from: 'tb1', to: 'tb2' }] },
+        artifacts: [],
       },
     ],
     kpis: [
