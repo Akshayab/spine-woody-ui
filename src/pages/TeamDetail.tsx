@@ -127,7 +127,7 @@ export default function TeamDetail() {
                 <span className="text-[10px] font-mono" style={{ color: 'var(--c-text-muted)' }}>
                   {runningAgents.length} / {team.subAgents.length} active
                 </span>
-                <button onClick={(e) => { e.stopPropagation(); navigate(`/conversations?team=${team.id}`); }}
+                <button onClick={(e) => { e.stopPropagation(); setRightTab('chat'); }}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-mono transition-colors"
                   style={{ background: `${color}12`, color, border: `1px solid ${color}20` }}>
                   <MessageSquare size={11} /> Message

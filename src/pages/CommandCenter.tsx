@@ -261,18 +261,36 @@ const teamExamples: Record<string, string[]> = {
   alex: ['Engineering Team', 'Competitive Intel', 'Customer Research', 'Growth & Analytics', 'Infrastructure Monitor'],
 };
 
+// Live inference as user types
+function inferPreview(text: string) {
+  const lower = text.toLowerCase();
+  if (lower.includes('engineer') || lower.includes('develop') || lower.includes('code') || lower.includes('ship') || lower.includes('build'))
+    return { lead: 'Forge', agents: ['Code Agent', 'Code Reviewer', 'DevOps Agent'], integrations: ['GitHub', 'Linear', 'Datadog'], type: 'Engineering' };
+  if (lower.includes('competi') || lower.includes('monitor') || lower.includes('watch') || lower.includes('track') || lower.includes('price'))
+    return { lead: 'Sentinel', agents: ['Web Scanner', 'Signal Analyst'], integrations: ['Google Alerts', 'Crunchbase'], type: 'Monitoring' };
+  if (lower.includes('customer') || lower.includes('research') || lower.includes('feedback') || lower.includes('user') || lower.includes('interview'))
+    return { lead: 'Echo', agents: ['Feedback Processor', 'Insight Writer'], integrations: ['Intercom', 'Typeform'], type: 'Research' };
+  if (lower.includes('content') || lower.includes('market') || lower.includes('social') || lower.includes('campaign') || lower.includes('brand'))
+    return { lead: 'Muse', agents: ['Content Drafter', 'Campaign Builder'], integrations: ['Mailchimp', 'Instagram'], type: 'Creative' };
+  if (lower.includes('sales') || lower.includes('pipeline') || lower.includes('rfp') || lower.includes('proposal') || lower.includes('deal'))
+    return { lead: 'Hunter', agents: ['RFP Scanner', 'Account Researcher', 'Proposal Writer'], integrations: ['LinkedIn', 'HubSpot'], type: 'Business Dev' };
+  if (text.length > 15)
+    return { lead: 'Compass', agents: ['Research Agent', 'Builder Agent'], integrations: ['Google Drive', 'Slack'], type: 'General' };
+  return null;
+}
+
 function AddTeamModal({ persona, onClose, onCreateTeam }: { persona: import('../data/types').Persona; onClose: () => void; onCreateTeam: (name: string, desc: string, lead: string) => void }) {
   const [step, setStep] = useState<'describe' | 'confirm'>('describe');
   const [description, setDescription] = useState('');
   const [teamName, setTeamName] = useState('');
   const examples = teamExamples[persona.id] || teamExamples.alex;
 
-  const leadNames = ['Atlas', 'Scout', 'Sentinel', 'Muse', 'Hunter', 'Compass', 'Watchdog', 'Quill', 'Pathfinder', 'Echo', 'Radar', 'Herald', 'Terra', 'Forge', 'Nexus', 'Spark', 'Orbit'];
-  const leadName = leadNames[Math.floor((description.length + teamName.length) % leadNames.length)] || 'Agent';
+  const preview = inferPreview(teamName + ' ' + description);
 
   const handleCreate = () => {
+    if (!preview) return;
     const finalName = teamName.trim() || description.split(' ').slice(0, 3).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    onCreateTeam(finalName, description, leadName);
+    onCreateTeam(finalName, description, preview.lead);
     setStep('confirm');
   };
 
@@ -288,52 +306,67 @@ function AddTeamModal({ persona, onClose, onCreateTeam }: { persona: import('../
         <div className="px-6 py-6">
           {step === 'describe' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <p className="text-[13px] mb-4" style={{ color: 'var(--c-text-secondary)' }}>
-                Describe what you need — we'll build a team with the right agents, tools, and integrations.
-              </p>
               <div className="mb-3">
                 <label className="text-[10px] font-mono uppercase tracking-[0.1em] block mb-1" style={{ color: 'var(--c-text-muted)' }}>Team name <span style={{ opacity: 0.5 }}>(optional)</span></label>
-                <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} placeholder="We'll generate one if blank"
+                <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} placeholder="We'll generate one"
                   className="w-full px-4 py-2.5 rounded-xl text-[13px] focus:outline-none"
                   style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-primary)' }} />
               </div>
-              <div className="mb-4">
+              <div className="mb-3">
                 <label className="text-[10px] font-mono uppercase tracking-[0.1em] block mb-1" style={{ color: 'var(--c-text-muted)' }}>What should this team do?</label>
                 <textarea value={description} onChange={e => setDescription(e.target.value)}
-                  placeholder="e.g., Monitor our competitors' pricing, track new product launches, and alert me to any changes"
-                  rows={4} className="w-full px-4 py-3 rounded-xl text-[13px] focus:outline-none resize-none"
+                  placeholder="Describe what you need — the preview below updates as you type"
+                  rows={3} className="w-full px-4 py-3 rounded-xl text-[13px] focus:outline-none resize-none"
                   style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-primary)' }} />
               </div>
-              <div className="mb-4">
-                <div className="text-[9px] font-mono uppercase tracking-[0.1em] mb-2 flex items-center gap-1.5" style={{ color: 'var(--c-text-muted)' }}>
-                  <Sparkles size={9} /> Ideas
-                </div>
-                <div className="flex flex-wrap gap-1.5">
+
+              {/* Live inference preview */}
+              {preview ? (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} key={preview.lead}
+                  className="mb-4 rounded-xl p-4" style={{ background: 'var(--c-surface)', border: '1px solid var(--c-accent-border)' }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Bot size={13} style={{ color: 'var(--c-accent)' }} />
+                      <span className="text-[12px] font-medium" style={{ color: 'var(--c-text-primary)' }}>{preview.lead}</span>
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: 'var(--c-accent-dim)', color: 'var(--c-accent)' }}>Team Lead</span>
+                    </div>
+                    <span className="text-[9px] font-mono" style={{ color: 'var(--c-text-muted)' }}>{preview.type}</span>
+                  </div>
+                  <div className="flex items-center gap-4 text-[10px]" style={{ color: 'var(--c-text-muted)' }}>
+                    <span>{preview.agents.length} agents: <span style={{ color: 'var(--c-text-secondary)' }}>{preview.agents.join(', ')}</span></span>
+                  </div>
+                  <div className="flex items-center gap-4 mt-1 text-[10px]" style={{ color: 'var(--c-text-muted)' }}>
+                    <span>Integrations: <span style={{ color: 'var(--c-text-secondary)' }}>{preview.integrations.join(', ')}</span></span>
+                  </div>
+                  <p className="text-[9px] font-mono mt-2" style={{ color: 'var(--c-text-muted)', opacity: 0.6 }}>Auto-configured — you can adjust everything after creation</p>
+                </motion.div>
+              ) : (
+                <div className="mb-4 flex flex-wrap gap-1.5">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.1em] mr-1 mt-1" style={{ color: 'var(--c-text-muted)' }}>Ideas:</span>
                   {examples.map((ex, i) => (
                     <button key={i} onClick={() => { setTeamName(ex); setDescription(`Set up a team focused on ${ex.toLowerCase()}. Configure the right agents, connectors, and automations.`); }}
-                      className="text-[10px] font-mono px-2.5 py-1 rounded-full transition-colors"
-                      style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-muted)' }}>
-                      {ex}
-                    </button>
+                      className="text-[10px] font-mono px-2.5 py-1 rounded-full"
+                      style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-muted)' }}>{ex}</button>
                   ))}
                 </div>
-              </div>
-              <button onClick={handleCreate} className="w-full px-4 py-3 rounded-xl text-[12px] font-mono font-medium"
-                style={{ background: description.trim() ? 'var(--c-accent)' : 'var(--c-surface-2)', color: description.trim() ? 'white' : 'var(--c-text-muted)' }}
-                disabled={!description.trim()}>
-                Create Team
+              )}
+
+              <button onClick={handleCreate} disabled={!preview}
+                className="w-full px-4 py-3 rounded-xl text-[12px] font-mono font-medium"
+                style={{ background: preview ? 'var(--c-accent)' : 'var(--c-surface-2)', color: preview ? 'white' : 'var(--c-text-muted)' }}>
+                {preview ? `Create team with ${preview.lead}` : 'Start typing to see preview'}
               </button>
             </motion.div>
           )}
-          {step === 'confirm' && (
+          {step === 'confirm' && preview && (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-4">
               <div className="w-12 h-12 rounded-xl mx-auto mb-4 flex items-center justify-center" style={{ background: 'var(--c-accent-dim)' }}>
                 <Bot size={24} style={{ color: 'var(--c-accent)' }} />
               </div>
               <h3 className="text-[16px] font-medium mb-1" style={{ color: 'var(--c-text-primary)' }}>{teamName || 'New Team'}</h3>
-              <p className="text-[12px] font-mono mb-3" style={{ color: 'var(--c-accent)' }}>Team lead: {leadName}</p>
+              <p className="text-[12px] font-mono mb-3" style={{ color: 'var(--c-accent)' }}>Team lead: {preview.lead}</p>
               <p className="text-[12px] mb-4 max-w-sm mx-auto" style={{ color: 'var(--c-text-secondary)' }}>
-                Your team is live. {leadName} is setting up agents and integrations. You'll see activity start appearing shortly.
+                {preview.lead} is deploying {preview.agents.length} agents and connecting {preview.integrations.length} integrations. Watch the team detail page to see it come alive.
               </p>
               <button onClick={onClose} className="px-6 py-2.5 rounded-xl text-[12px] font-mono font-medium" style={{ background: 'var(--c-accent)', color: 'white' }}>
                 Go to Command Center
