@@ -10,6 +10,7 @@ import Conversations from './pages/Conversations';
 import ArtifactsPage from './pages/Artifacts';
 import AutomationsPage from './pages/Automations';
 import IMessage from './pages/IMessage';
+import Onboarding from './pages/Onboarding';
 import SettingsPage from './pages/SettingsPage';
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
               <Route path="automations" element={<AutomationsPage />} />
               <Route path="imessage" element={<IMessage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="onboarding" element={<Onboarding />} />
             </Route>
           </Routes>
         </HashRouter>

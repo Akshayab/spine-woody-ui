@@ -87,7 +87,7 @@ export default function CommandCenter() {
           <p className="text-[13px] max-w-md mx-auto mb-8" style={{ color: 'var(--c-text-secondary)' }}>
             Create your first team to get started. Describe what you need — we'll build the right AI team with the right agents, tools, and integrations.
           </p>
-          <button onClick={() => setShowAddTeam(true)}
+          <button onClick={() => navigate('/onboarding')}
             className="px-6 py-3 rounded-xl text-[13px] font-mono font-medium inline-flex items-center gap-2"
             style={{ background: 'var(--c-accent)', color: 'white' }}>
             <Plus size={15} /> Create Your First Team
@@ -100,7 +100,7 @@ export default function CommandCenter() {
             </div>
             <div className="flex flex-wrap justify-center gap-2">
               {currentPersona.suggestedActions.map(a => (
-                <button key={a.id} onClick={() => setShowAddTeam(true)}
+                <button key={a.id} onClick={() => navigate('/onboarding')}
                   className="text-[11px] font-mono px-3 py-1.5 rounded-full"
                   style={{ background: 'var(--c-surface)', border: '1px solid var(--c-border)', color: 'var(--c-text-muted)' }}>
                   {a.text}
